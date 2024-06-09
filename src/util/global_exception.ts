@@ -52,7 +52,7 @@ export class EntityNotFoundException extends Error implements IHTTPError {
 
     constructor(message: string, data?: string[]) {
         super(message || "Internal Server Error");
-        this.statusCode = HTTPStatusCode.BadRequest;
+        this.statusCode = HTTPStatusCode.NotFound;
         this.data = data ?? [];
     }
 }

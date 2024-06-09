@@ -12,52 +12,54 @@ const prisma = new PrismaClient()
 const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user_data = UserSchema.register.parse(req.body);
-
-        const existingUser = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email: user_data.email },
-                    { username: user_data.username },
-                ],
-            },
-        });
-
-        if (existingUser != null) {
-            if (existingUser.email == user_data.email) {
-                throw new ConflictException('Email has been registered');
+        await prisma.$transaction(async(tx)=>{
+            const existingUser = await prisma.user.findFirst({
+                where: {
+                    OR: [
+                        { email: user_data.email },
+                        { username: user_data.username },
+                    ],
+                },
+            });
+    
+            if (existingUser != null) {
+                if (existingUser.email == user_data.email) {
+                    throw new ConflictException('Email has been registered');
+                }
+                throw new ConflictException('Username has been registered');
             }
-            throw new ConflictException('Username has been registered');
-        }
-
-        const hashed_password = await bcrypt.hash(user_data.password, 10);
-
-        const user = await prisma.user.create({
-            data: {
-                username: user_data.username,
-                email: user_data.email,
-                password: hashed_password
+    
+            const hashed_password = await bcrypt.hash(user_data.password, 10);
+    
+            
+            const basicAuth = await prisma.authority.findUnique({
+                where: {
+                    authority: "BASIC"
+                }
+            })
+    
+            if(basicAuth == null){
+                throw new EntityNotFoundException(`Authority with role BASIC, NOT FOUND!`)
             }
-        })
-
-        const basicAuth = await prisma.authority.findUnique({
-            where: {
-                authority: "BASIC"
-            }
-        })
-
-        if(basicAuth == null){
-            throw new EntityNotFoundException(`Authority with role BASIC, NOT FOUND!`)
-        }
-
-        await prisma.userAuthority.create({
-            data: {
-                userId: user.id,
-                authorityId: basicAuth.id
-            }
-        })
-
-        res.status(201).json({
-            message: "Register successfull"
+    
+            const user = await tx.user.create({
+                data: {
+                    username: user_data.username,
+                    email: user_data.email,
+                    password: hashed_password
+                }
+            })
+    
+            await tx.userAuthority.create({
+                data: {
+                    userId: user.id,
+                    authorityId: basicAuth.id
+                }
+            })
+    
+            res.status(201).json({
+                message: "Register successfull"
+            })
         })
     } catch (error) {
         next(error)
@@ -68,51 +70,53 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = UserSchema.login.parse(req.body);
 
-        const loggedUser = await prisma.user.findUnique({ 
-            where: { username: userData.username },
-            include: { token: true }
-        });
-
-        if (!loggedUser) {
-            throw new UnauthorizedException('Wrong username or password!')
-        }
-
-        const isPasswordValid = await bcrypt.compare(userData.password, loggedUser.password);
-        if (!isPasswordValid) {
-           throw new UnauthorizedException('Wrong username or password!');
-        }
-
-        const accessToken = generate_access_token({
-            userId: loggedUser.id,
-        });
-        
-        const refreshToken = generate_refresh_token({
-            userId: loggedUser.id,
-        });
-
-        if (loggedUser.token) {
-            await prisma.userToken.update({
-                where: { userId: loggedUser.id },
-                data: {
-                    refreshToken
-                },
+        await prisma.$transaction(async(tx)=>{
+            const loggedUser = await prisma.user.findUnique({ 
+                where: { username: userData.username },
+                include: { token: true }
             });
-        } else {
-            if(accessToken !=null){
-                await prisma.userToken.create({
+    
+            if (!loggedUser) {
+                throw new UnauthorizedException('Wrong username or password!')
+            }
+    
+            const isPasswordValid = await bcrypt.compare(userData.password, loggedUser.password);
+            if (!isPasswordValid) {
+               throw new UnauthorizedException('Wrong username or password!');
+            }
+    
+            const accessToken = generate_access_token({
+                userId: loggedUser.id,
+            });
+            
+            const refreshToken = generate_refresh_token({
+                userId: loggedUser.id,
+            });
+    
+            if (loggedUser.token) {
+                await tx.userToken.update({
+                    where: { userId: loggedUser.id },
                     data: {
-                        user: { connect: { id: loggedUser.id } },
-                        refreshToken: accessToken
+                        refreshToken
                     },
                 });
+            } else {
+                if(refreshToken !=null){
+                    await tx.userToken.create({
+                        data: {
+                            user: { connect: { id: loggedUser.id } },
+                            refreshToken: refreshToken
+                        },
+                    });
+                }
             }
-        }
-
-        res.json({
-            accessToken,
-            refreshToken,
-            message: "Login successful",
-        });
+    
+            res.json({
+                accessToken,
+                refreshToken,
+                message: "Login successful",
+            });
+        })
     } catch (error: unknown) {
         next(error)
     }
