@@ -124,13 +124,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const get_personal_info = async(req: Request, res: Response, next: NextFunction)=>{
     try {
-        const user = await prisma.user.findUnique({
-            where: {id: req.decoded?.userId},
-            include: { userAuthorities: { include: { authority: true } } },
-        })
-        if(user){
-
-        }
+        let user = {...req.user, authorities: req.authorities}
+        res.status(200).json({message: "SUCCESS!", user})
     } catch (error) {
         console.error("error:", error); 
         res.status(500).json({ message: "Internal server error" });
@@ -138,5 +133,5 @@ const get_personal_info = async(req: Request, res: Response, next: NextFunction)
 }
 
 export default {
-    register, login
+    register, login, get_personal_info
 }

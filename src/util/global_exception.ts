@@ -41,7 +41,7 @@ export class UnauthorizedException extends Error implements IHTTPError {
 
     constructor(message: string, data?: string[]) {
         super(message || "Unauthorized");
-        this.statusCode = HTTPStatusCode.BadRequest;
+        this.statusCode = HTTPStatusCode.Unauthorized;
         this.data = data ?? [];
     }
 }

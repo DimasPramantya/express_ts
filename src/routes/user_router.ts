@@ -1,9 +1,9 @@
 import express from "express";
 import userService from "../service/user_service";
-import { validate_token } from "../util/token";
+import { has_any_authorities, validate_token } from "../middleware/validation"; 
 
 const router = express.Router();
 
-router.get("/me", validate_token, )
+router.get("/me", validate_token, has_any_authorities(['ADMIN']), userService.get_personal_info)
 
-export default router; 
+export default router;  
