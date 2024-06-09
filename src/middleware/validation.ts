@@ -32,13 +32,13 @@ export function validateData(schema: z.ZodObject<any, any>) {
 export function has_any_authorities(authorities: string[]) {
     return async(req: Request, res: Response, next: NextFunction) => {
         try {
-            authorities.forEach(e => {
+            for(const e of authorities){
                 const index = req.authorities.find((el)=>el.authority==e);
                 if(index){
                     console.log("This request is authorized");
-                    next();
+                    return next();
                 }
-            })
+            }
             throw new UnauthorizedException("Unauthorized!")
         } catch (error) {
             console.log(error);
