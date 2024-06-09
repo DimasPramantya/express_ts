@@ -5,8 +5,9 @@ import express, {Express, NextFunction, Request, Response} from "express";
 import dotenv from "dotenv";
 import { PrismaClient } from '@prisma/client'
 //ubah jadi routes
-import principal_controller from './routes/principal_router'
-import user_controller from './routes/user_router'
+import principal_router from './routes/principal_router'
+import user_router from './routes/user_router'
+import { exceptionHandler } from "./middleware/exception";
 const prisma = new PrismaClient()
 
 dotenv.config();
@@ -18,8 +19,9 @@ const app: Express = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/principal", principal_controller);
-app.use("/user",user_controller);
+app.use("/principal", principal_router);
+app.use("/user",user_router);
+app.use(exceptionHandler);
 //blog
 //app.use('/blog', blog_controller)
 

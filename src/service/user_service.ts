@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client'
 import { generate_access_token, generate_refresh_token } from "../util/token";
 
 import bcrypt from 'bcrypt'
+import { ConflictException, UnauthorizedException } from "../util/global_exception";
 
 const prisma = new PrismaClient()
 
@@ -23,13 +24,9 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
         if (existingUser != null) {
             if (existingUser.email == user_data.email) {
-                res.status(409).json({
-                    message: `Email has been registered!`
-                })
+                throw new ConflictException('Email has been registered');
             }
-            res.status(409).json({
-                message: `Username has been registered!`
-            })
+            throw new ConflictException('Username has been registered');
         }
 
         const hashed_password = await bcrypt.hash(user_data.password, 10);
@@ -46,10 +43,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
             message: "Register successfull"
         })
     } catch (error) {
-        console.log(`Internal Server Error: ${error}`);
-        res.status(500).json({
-            message: "Internal Server Error"
-        })
+        next(error)
     }
 }
 
@@ -63,12 +57,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         });
 
         if (!loggedUser) {
-            return res.status(401).json({ message: "Wrong username or password!" }); 
+            throw new UnauthorizedException('Wrong username or password!')
         }
 
         const isPasswordValid = await bcrypt.compare(userData.password, loggedUser.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ message: "Wrong username or password!" });
+           throw new UnauthorizedException('Wrong username or password!');
         }
 
         const accessToken = generate_access_token({
@@ -103,8 +97,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
             message: "Login successful",
         });
     } catch (error: unknown) {
-        console.error("Login error:", error); 
-        res.status(500).json({ message: "Internal server error" });
+        next(error)
     }
 };
 
