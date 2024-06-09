@@ -9,9 +9,8 @@ export const exceptionHandler = (
 ) => {
     const statusCode = error.statusCode || 500;
     const message = error.message || "Internal Server Error!";
+    
+    console.log("from exc handler " + error);
 
-    console.log(error);
-
-
-    return res.status(statusCode).send({ statusCode, message });
+    return res.status(statusCode).send({ statusCode, message, data: error.data });
 };

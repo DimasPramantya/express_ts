@@ -8,42 +8,47 @@ datasource db {
 }
 
 model User {
-  id             String        @id @default(cuid())
-  username       String        @unique
-  name           String?
-  email          String        @unique
-  profilePicture String?       @db.VarChar(300)
-  password       String        @db.VarChar(300)
+  id              String          @id @default(cuid())
+  username        String          @unique
+  name            String?
+  email           String          @unique
+  profilePicture  String?         @map("profile_picture") @db.VarChar(300)
+  password        String          @db.VarChar(300)
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at") @default(now())
   userAuthorities UserAuthority[]
-  token          UserToken?     
+  token           UserToken?
 
   @@map("users")
 }
 
 model Authority {
-  id             Int           @id @default(autoincrement())
-  authority      String        @unique
+  id              Int             @id @default(autoincrement())
+  authority       String          @unique
   userAuthorities UserAuthority[]
 
   @@map("authorities")
 }
 
 model UserAuthority {
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-
-  authority        Authority @relation(fields: [authorityId], references: [id], onDelete: Cascade)
-  authorityId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String    @map("user_id")
+  authority   Authority @relation(fields: [authorityId], references: [id], onDelete: Cascade)
+  authorityId Int       @map("authority_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at") @default(now())
 
   @@id([userId, authorityId])
   @@map("users_authorities")
 }
 
 model UserToken {
-  id           Int    @id @default(autoincrement())
-  accessToken  String @db.VarChar(2048)
-  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String @unique 
+  id           Int      @id @default(autoincrement())
+  refreshToken String   @map("refresh_token") @db.VarChar(2048)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String   @unique @map("user_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at") @default(now())
 
-  @@map("user_tokens") 
+  @@map("user_tokens")
 }

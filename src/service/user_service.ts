@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import UserSchema from "../dto/user_dto";
+import UserSchema from "../schema/user_schema";
 
 import { PrismaClient } from '@prisma/client'
 import { generate_access_token, generate_refresh_token } from "../util/token";
 
 import bcrypt from 'bcrypt'
-import { ConflictException, UnauthorizedException } from "../util/global_exception";
+import { ConflictException, EntityNotFoundException, UnauthorizedException } from "../util/global_exception";
 
 const prisma = new PrismaClient()
 
@@ -36,6 +36,23 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
                 username: user_data.username,
                 email: user_data.email,
                 password: hashed_password
+            }
+        })
+
+        const basicAuth = await prisma.authority.findUnique({
+            where: {
+                authority: "BASIC"
+            }
+        })
+
+        if(basicAuth == null){
+            throw new EntityNotFoundException(`Authority with role BASIC, NOT FOUND!`)
+        }
+
+        await prisma.userAuthority.create({
+            data: {
+                userId: user.id,
+                authorityId: basicAuth.id
             }
         })
 
@@ -77,7 +94,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
             await prisma.userToken.update({
                 where: { userId: loggedUser.id },
                 data: {
-                    accessToken
+                    refreshToken
                 },
             });
         } else {
@@ -85,7 +102,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
                 await prisma.userToken.create({
                     data: {
                         user: { connect: { id: loggedUser.id } },
-                        accessToken: accessToken
+                        refreshToken: accessToken
                     },
                 });
             }
