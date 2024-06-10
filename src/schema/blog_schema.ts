@@ -8,6 +8,13 @@ const create = z.object({
     fileId: z.number(),
 });
 
+const update = z.object({
+    id: z.string(),
+    title: z.string(),
+    content: z.string(),
+    fileId: z.number(),
+});
+
 export default {
-    create
+    create, update
 }

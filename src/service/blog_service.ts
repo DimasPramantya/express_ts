@@ -83,6 +83,28 @@ const delete_blog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const update_blog = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const blog_data = blog_schema.update.parse(req.body);
+        const file = await prisma.file.findUnique({where: {id: blog_data.fileId}});
+        if(!file){
+            throw new EntityNotFoundException("File not found");
+        }
+        const blog_db = await prisma.blog.update({
+            where: {id: blog_data.id},
+            data: {
+                title: blog_data.title,
+                content: blog_data.content,
+                imageUrl: file?.secureUrl,
+                fileId: blog_data.fileId
+            }
+        })
+        res.status(200).json({message: "Update Blog Success", blog: blog_db});
+    } catch (error) {
+        next(error);
+    }
+}  
+
 export default {
-    add_blog, get_all_blog, get_blog_by_id, delete_blog
+    add_blog, get_all_blog, get_blog_by_id, delete_blog, update_blog
 }
