@@ -105,6 +105,34 @@ const update_blog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }  
 
+const get_blog_by_author = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
+        const totalBlogs = await prisma.blog.count();
+
+        const blogs = await prisma.blog.findMany({
+            skip,
+            take: limit,
+            include: { author: {select: {username: true}} },
+            where: { authorId: req.user.id }
+        });
+
+        const totalPages = Math.ceil(totalBlogs / limit);
+
+        res.status(200).json({
+            totalBlogs,
+            totalPages,
+            currentPage: page,
+            blogs,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
-    add_blog, get_all_blog, get_blog_by_id, delete_blog, update_blog
+    add_blog, get_all_blog, get_blog_by_id, delete_blog, update_blog, get_blog_by_author
 }

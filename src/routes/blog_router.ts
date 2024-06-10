@@ -17,5 +17,7 @@ router.delete("/:id", validate_token, has_any_authorities(["ADMIN"]), blog_servi
 
 router.put("", validate_token, has_any_authorities(["ADMIN"]), validateData(blog_schema.update), blog_service.update_blog);
 
+router.get("/users/me", validate_token, has_any_authorities(["ADMIN"]), blog_service.get_blog_by_author);
+
 export default router;
 
