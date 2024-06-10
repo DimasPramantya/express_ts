@@ -69,9 +69,20 @@ const get_blog_by_id = async (req: Request, res: Response, next: NextFunction) =
     } catch (error) {
         next(error);
     }
+}
 
+const delete_blog = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {id} = req.params;
+        await prisma.blog.delete({
+            where: {id}
+        });
+        res.status(200).json({message: "Delete Blog Success"});
+    } catch (error) {
+        next(error);
+    }
 }
 
 export default {
-    add_blog, get_all_blog, get_blog_by_id
+    add_blog, get_all_blog, get_blog_by_id, delete_blog
 }

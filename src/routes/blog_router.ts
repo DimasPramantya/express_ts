@@ -13,5 +13,7 @@ router.get("", blog_service.get_all_blog);
 
 router.get("/:id", blog_service.get_blog_by_id);
 
+router.delete("/:id", validate_token, has_any_authorities(["ADMIN"]), blog_service.delete_blog);
+
 export default router;
 
