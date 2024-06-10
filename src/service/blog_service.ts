@@ -2,6 +2,7 @@ import { EntityNotFoundException, InternalServerErrorException } from "../util/g
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import blog_schema from "../schema/blog_schema";
+import { get } from "http";
 
 const prisma = new PrismaClient()
 
@@ -53,6 +54,24 @@ const get_all_blog = async (req: Request, res: Response, next: NextFunction) => 
         next(error);
     }
 }
+
+const get_blog_by_id = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const blog = await prisma.blog.findUnique({
+            where: { id },
+            include: { author: {select: {username: true}} }
+        });
+        if(!blog){
+            throw new EntityNotFoundException(`Blog with id - ${id} not found`);
+        }
+        res.status(200).json({message: "Success", blog});
+    } catch (error) {
+        next(error);
+    }
+
+}
+
 export default {
-    add_blog, get_all_blog
+    add_blog, get_all_blog, get_blog_by_id
 }
