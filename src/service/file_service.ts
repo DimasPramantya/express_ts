@@ -1,6 +1,6 @@
 import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 import cloudinary from "../util/cloudinary_uploader";
-import { InternalServerErrorException } from "../util/global_exception";
+import { EntityNotFoundException, InternalServerErrorException } from "../util/global_exception";
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 
@@ -44,7 +44,24 @@ const upload_image = async(req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+const get_image_by_id = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const file = await prisma.file.findUnique({
+            where: {
+                id: parseInt(id)
+            }
+        });
+        if(!file){
+            throw new EntityNotFoundException(`File with id - ${id} not found`);
+        }
+        res.status(200).json({message:"Success",file});
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
-    upload_image 
+    upload_image, get_image_by_id
 }
 

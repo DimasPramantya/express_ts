@@ -9,6 +9,8 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-router.post("/upload", validate_token, has_any_authorities(['BASIC']), upload.single('image'), fileService.upload_image);
+router.post("/upload", validate_token, has_any_authorities(['BASIC', 'ADMIN']), upload.single('image'), fileService.upload_image);
+
+router.get("/:id", validate_token, has_any_authorities(['BASIC', 'ADMIN']), fileService.get_image_by_id);
 
 export default router;
