@@ -23,10 +23,36 @@ const add_blog = async(req: Request, res: Response, next: NextFunction) => {
         }
         throw new EntityNotFoundException("File not found");
     } catch (error) {
-        
+        next(error);
     }
 }
 
+const get_all_blog = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
+        const totalBlogs = await prisma.blog.count();
+
+        const blogs = await prisma.blog.findMany({
+            skip,
+            take: limit,
+            include: { author: {select: {username: true}} }
+        });
+
+        const totalPages = Math.ceil(totalBlogs / limit);
+
+        res.status(200).json({
+            totalBlogs,
+            totalPages,
+            currentPage: page,
+            blogs,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 export default {
-    add_blog
+    add_blog, get_all_blog
 }

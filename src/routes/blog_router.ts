@@ -9,5 +9,7 @@ const router = express.Router();
 
 router.post("", validate_token, has_any_authorities(["ADMIN"]), validateData(blog_schema.create), blog_service.add_blog);
 
+router.get("", blog_service.get_all_blog);
+
 export default router;
 
