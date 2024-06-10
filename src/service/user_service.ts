@@ -6,7 +6,6 @@ import { generate_access_token, generate_refresh_token } from "../util/token";
 
 import bcrypt from 'bcrypt'
 import { ConflictException, EntityNotFoundException, UnauthorizedException } from "../util/global_exception";
-import { UserDTO } from "../dto/user_dto";
 import { plainToClass } from "class-transformer";
 
 const prisma = new PrismaClient()
@@ -126,8 +125,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const get_personal_info = async(req: Request, res: Response, next: NextFunction)=>{
     try {
-        const userDTO = plainToClass(UserDTO, req.user, { excludeExtraneousValues: true });
-        let user = {userDTO, authorities: req.authorities}
+        const userDTO = plainToClass(UserSchema.UserResponse, req.user, { excludeExtraneousValues: true });
+        let user = {...userDTO, authorities: req.authorities}
         res.status(200).json({message: "SUCCESS!", user})
     } catch (error) {
         next(error);

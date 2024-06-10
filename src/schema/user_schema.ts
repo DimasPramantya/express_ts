@@ -1,5 +1,6 @@
-// sama seperti dto
 import { z } from 'zod'; 
+import { IsString, IsEmail, IsOptional } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
 
 const register = z.object({
     email: z.string().email(),
@@ -12,6 +13,23 @@ const login = z.object({
     password: z.string()
 })
 
+class UserResponse {
+    @Expose() @IsString()
+    id?: string;
+
+    @Expose() @IsString()
+    username?: string;
+
+    @Expose() @IsEmail()
+    email?: string;
+
+    @Expose() @IsString()
+    name?: string;
+
+    @Expose() @IsOptional() @IsString()
+    profilePicture?: string;
+}
+
 export default {
-    register, login
+    register, login, UserResponse
 }
