@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import blog_schema from "../schema/blog_schema";
 import { get } from "http";
+import cloudinary from "../util/cloudinary_uploader";
 
 const prisma = new PrismaClient()
 
@@ -74,6 +75,14 @@ const get_blog_by_id = async (req: Request, res: Response, next: NextFunction) =
 const delete_blog = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const {id} = req.params;
+        const blog = await prisma.blog.findUnique({where: {id}});
+        if(blog == null){
+            throw new EntityNotFoundException(`Blog with id - ${id} not found`);
+        }
+        const file = await prisma.file.findUnique({where: {id: blog.fileId}});
+        if(file != null){
+            await cloudinary.uploader.destroy(file.cloudinaryId);
+        }
         await prisma.blog.delete({
             where: {id}
         });
