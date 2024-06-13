@@ -49,7 +49,7 @@ const get_image_by_id = async(req: Request, res: Response, next: NextFunction) =
         const { id } = req.params;
         const file = await prisma.file.findUnique({
             where: {
-                id: parseInt(id)
+                id
             }
         });
         if(!file){
