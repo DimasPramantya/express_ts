@@ -5,14 +5,14 @@ import { Expose, Type } from 'class-transformer';
 const create = z.object({
     title: z.string(),
     content: z.string(),
-    fileId: z.number(),
+    fileId: z.string(),
 });
 
 const update = z.object({
-    id: z.string(),
+    id: z.number(),
     title: z.string(),
     content: z.string(),
-    fileId: z.number(),
+    fileId: z.string(),
 });
 
 export default {
