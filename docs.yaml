@@ -3,7 +3,7 @@ info:
   title: "Blog Api Documentation"
   version: "1.0.0"
 servers:
-  - url: "https://api.example.com"
+  - url: "https://express-ts-j6usm5hcwa-et.a.run.app/"
     description: "Production server"
   - url: "http://localhost:8080"
     description: "Local development server"
@@ -46,6 +46,7 @@ paths:
                     items:
                       type: string
                     example: ["Email is required", "Password is required"]
+      security: []
   /principal/login:
     post:
       summary: Login Existing User
@@ -100,6 +101,7 @@ paths:
                     items:
                       type: string
                     example: []
+      security: []
 components:
   securitySchemes:
     bearerAuth:
