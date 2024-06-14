@@ -3,6 +3,9 @@
 // express async error
 import express, {Express, NextFunction, Request, Response} from "express";
 import dotenv from "dotenv";
+import path from "path";
+import YAML from "yamljs"; 
+import swaggerUi from "swagger-ui-express"; 
 import { PrismaClient } from '@prisma/client'
 //ubah jadi routes
 import principal_router from './routes/principal_router'
@@ -16,7 +19,16 @@ dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 
+
 const app: Express = express();
+
+const swaggerDocument = YAML.load(path.join(__dirname, '..', 'docs.yaml')); 
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.get('/docs.yaml', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'docs.yaml'));
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -26,8 +38,6 @@ app.use("/user",user_router);
 app.use("/file", file_router);
 app.use("/blog", blog_router);
 app.use(exceptionHandler);
-//blog
-//app.use('/blog', blog_controller)
 
 app.get("/public", (req: Request, res: Response, next: NextFunction)=>{
     res.json({

@@ -15,7 +15,7 @@ export enum HTTPStatusCode {
     MethodNotAllowed = 405,
     RequestTimeout = 408,
     Conflict = 409,
-    Gone = 410,
+    Gone = 410, 
     UnprocessableEntity = 422,
     TooManyRequests = 429,
     InternalServerError = 500,
