@@ -19,6 +19,10 @@ COPY . .
 # Install TypeScript globally
 RUN npm install -g typescript
 
+RUN npx prisma migrate dev
+
+RUN npx prisma generate
+
 # Compile TypeScript to JavaScript
 RUN npm run build
 
