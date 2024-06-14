@@ -102,6 +102,36 @@ paths:
                       type: string
                     example: []
       security: []
+  /user/me:
+    get:
+      summary: Get current user
+      description: Get current user data
+      tags:
+        - User
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+                  data:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+      security:
+        - bearerAuth: []
 components:
   securitySchemes:
     bearerAuth:
