@@ -13,16 +13,22 @@ import user_router from './routes/user_router'
 import file_router from './routes/file_router'
 import blog_router from './routes/blog_router'
 import { exceptionHandler } from "./middleware/exception";
+import cors from 'cors';
 const prisma = new PrismaClient()
 
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 
-
 const app: Express = express();
 
 const swaggerDocument = YAML.load(path.join(__dirname, '..', 'docs.yaml')); 
+
+const options: cors.CorsOptions = {
+    origin: '*'
+};
+
+app.use(cors(options));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

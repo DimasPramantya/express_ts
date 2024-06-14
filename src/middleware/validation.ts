@@ -22,7 +22,7 @@ export function validateData(schema: z.ZodObject<any, any>) {
                     return `${issue.path.join('.')} is ${issue.message}`;
                 });
                 console.log(errorMessages);
-                throw new BadRequestException("MISSING DATA", errorMessages);
+                throw new BadRequestException("INVALID DATA", errorMessages);
             }
             throw new InternalServerErrorException("Internal Server Error");
         }
