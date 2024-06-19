@@ -27,6 +27,7 @@ const upload_image_cloudinary_handler = async (file: CloudinaryFile): Promise<Up
 const upload_image = async(req: Request, res: Response, next: NextFunction) => {
     try {
         const file = req.file as CloudinaryFile;
+        console.log(file)
         const result = await upload_image_cloudinary_handler(file);
         const file_db = await prisma.file.create({
             data: {
@@ -40,6 +41,7 @@ const upload_image = async(req: Request, res: Response, next: NextFunction) => {
         })
         res.status(200).json({message: "Image uploaded successfully", file: file_db});
     } catch (error) {
+        console.log(error);
         next(error);
     }
 }

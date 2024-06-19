@@ -16,6 +16,8 @@ import { exceptionHandler } from "./middleware/exception";
 import cors from 'cors';
 const prisma = new PrismaClient()
 
+//jsend
+
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;

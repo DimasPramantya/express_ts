@@ -3,7 +3,7 @@ info:
   title: "Blog Api Documentation"
   version: "1.0.0"
 servers:
-  - url: "https://express-ts-j6usm5hcwa-et.a.run.app/"
+  - url: "https://express-ts-j6usm5hcwa-et.a.run.app"
     description: "Production server"
   - url: "http://localhost:8080"
     description: "Local development server"
