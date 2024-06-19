@@ -14,7 +14,7 @@ async function register(req: Request, res: Response, next: NextFunction){
     try {
         const user_data = UserSchema.register.parse(req.body);
         await prisma.$transaction(async(tx)=>{
-            const existingUser = await prisma.user.findFirst({
+            const existingUser = await tx.user.findFirst({
                 where: {
                     OR: [
                         { email: user_data.email },
@@ -33,7 +33,7 @@ async function register(req: Request, res: Response, next: NextFunction){
             const hashed_password = await bcrypt.hash(user_data.password, 10);
     
             
-            const basicAuth = await prisma.authority.findUnique({
+            const basicAuth = await tx.authority.findUnique({
                 where: {
                     authority: "BASIC"
                 }
@@ -72,7 +72,7 @@ async function login(req: Request, res: Response, next: NextFunction){
         const userData = UserSchema.login.parse(req.body);
 
         await prisma.$transaction(async(tx)=>{
-            const loggedUser = await prisma.user.findUnique({ 
+            const loggedUser = await tx.user.findUnique({ 
                 where: { username: userData.username },
                 include: { token: true }
             });
