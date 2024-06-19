@@ -10,7 +10,7 @@ interface CloudinaryFile extends Express.Multer.File {
     buffer: Buffer;
 }
 
-const uploadImageCloudinaryHandler = async (file: CloudinaryFile): Promise<UploadApiResponse | UploadApiErrorResponse> => {
+async function uploadImageCloudinaryHandler(file: CloudinaryFile): Promise<UploadApiResponse | UploadApiErrorResponse>{
     try {
         const base64String = file.buffer.toString('base64');
         const dataUri = `data:${file.mimetype};base64,${base64String}`;
@@ -24,7 +24,7 @@ const uploadImageCloudinaryHandler = async (file: CloudinaryFile): Promise<Uploa
     }
 };
 
-const uploadImage = async(req: Request, res: Response, next: NextFunction) => {
+async function uploadImage(req: Request, res: Response, next: NextFunction){
     try {
         const file = req.file as CloudinaryFile;
         console.log(file)
@@ -46,7 +46,7 @@ const uploadImage = async(req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const getImageById = async(req: Request, res: Response, next: NextFunction) => {
+async function getImageById(req: Request, res: Response, next: NextFunction){
     try {
         const { id } = req.params;
         const file = await prisma.file.findUnique({

@@ -6,7 +6,7 @@ import cloudinary from "../util/cloudinary_uploader";
 
 const prisma = new PrismaClient()
 
-const addBlog = async (req: Request, res: Response, next: NextFunction) => {
+async function addBlog(req: Request, res: Response, next: NextFunction){
     try {
         const blog_data = blog_schema.create.parse(req.body);
         const file = await prisma.file.findUnique({ where: { id: blog_data.fileId } });
@@ -28,7 +28,7 @@ const addBlog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const getAllBlog = async (req: Request, res: Response, next: NextFunction) => {
+async function getAllBlog(req: Request, res: Response, next: NextFunction){
     try {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
@@ -75,7 +75,7 @@ const getAllBlog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const getBlogById = async (req: Request, res: Response, next: NextFunction) => {
+async function getBlogById(req: Request, res: Response, next: NextFunction){
     try {
         const id  = parseInt(req.params.id);
         const blog = await prisma.blog.findUnique({
@@ -91,7 +91,7 @@ const getBlogById = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const deleteBlog = async (req: Request, res: Response, next: NextFunction) => {
+async function deleteBlog(req: Request, res: Response, next: NextFunction){
     try {
         const id  = parseInt(req.params.id);
         const blog = await prisma.blog.findUnique({ where: { id } });
@@ -111,7 +111,7 @@ const deleteBlog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const updateBlog = async (req: Request, res: Response, next: NextFunction) => {
+async function updateBlog(req: Request, res: Response, next: NextFunction){
     try {
         const blog_data = blog_schema.update.parse(req.body);
         const file = await prisma.file.findUnique({ where: { id: blog_data.fileId } });
@@ -133,7 +133,7 @@ const updateBlog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const getBlogByAuthor = async (req: Request, res: Response, next: NextFunction) => {
+async function getBlogByAuthor(req: Request, res: Response, next: NextFunction){
     try {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;

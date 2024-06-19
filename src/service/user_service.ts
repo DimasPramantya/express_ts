@@ -10,7 +10,7 @@ import { plainToClass } from "class-transformer";
 
 const prisma = new PrismaClient()
 
-const register = async (req: Request, res: Response, next: NextFunction) => {
+async function register(req: Request, res: Response, next: NextFunction){
     try {
         const user_data = UserSchema.register.parse(req.body);
         await prisma.$transaction(async(tx)=>{
@@ -67,7 +67,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+async function login(req: Request, res: Response, next: NextFunction){
     try {
         const userData = UserSchema.login.parse(req.body);
 
@@ -123,7 +123,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-const getPersonalInfo = async(req: Request, res: Response, next: NextFunction)=>{
+async function getPersonalInfo(req: Request, res: Response, next: NextFunction){
     try {
         const userDTO = plainToClass(UserSchema.UserResponse, req.user, { excludeExtraneousValues: true });
         let user = {...userDTO, authorities: req.authorities}
