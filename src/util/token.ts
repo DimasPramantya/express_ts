@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import { CustomJwtPayload } from "../..";
 dotenv.config();
 
-export function generate_access_token(payload: Object){
+export function generateAccessToken(payload: CustomJwtPayload){
     try {
         const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: '30m'})
         return token
@@ -14,7 +14,7 @@ export function generate_access_token(payload: Object){
     }
 }
 
-export function generate_refresh_token(payload: Object){
+export function generateRefreshToken(payload: CustomJwtPayload){
     try {
         const token = jwt.sign(payload, process.env.JWT_SECRET!, {expiresIn: '7d'})
         return token

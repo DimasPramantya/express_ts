@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import UserSchema from "../schema/user_schema";
 
 import { PrismaClient } from '@prisma/client'
-import { generate_access_token, generate_refresh_token } from "../util/token";
+import { generateAccessToken, generateRefreshToken } from "../util/token";
 
 import bcrypt from 'bcrypt'
 import { ConflictException, EntityNotFoundException, UnauthorizedException } from "../util/global_exception";
@@ -86,11 +86,11 @@ async function login(req: Request, res: Response, next: NextFunction){
                throw new UnauthorizedException('Wrong username or password!');
             }
     
-            const accessToken = generate_access_token({
+            const accessToken = generateAccessToken({
                 userId: loggedUser.id,
             });
             
-            const refreshToken = generate_refresh_token({
+            const refreshToken = generateRefreshToken({
                 userId: loggedUser.id,
             });
     
