@@ -1,0 +1,183 @@
+openapi: "3.0.0"
+info:
+  title: "Blog Api Documentation"
+  version: "1.0.0"
+servers:
+  - url: "https://express-ts-j6usm5hcwa-et.a.run.app"
+    description: "Production server"
+  - url: "http://localhost:8080"
+    description: "Local development server"
+paths:
+  /principal/register:
+    post:
+      summary: Register a new user
+      description: If success, route back to login!
+      tags:
+        - Principal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Register successful
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing required fields
+                  data:
+                    type: array
+                    items:
+                      type: string
+                    example: ["Email is required", "Password is required"]
+      security: []
+  /principal/login:
+    post:
+      summary: Login Existing User
+      description: If success, it will send access token and refresh token
+      tags:
+        - Principal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing required fields
+                  data:
+                    type: array
+                    items:
+                      type: string
+                    example: ["Email is required", "Password is required"]
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Wrong Email or Password
+                  data:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+      security: []
+  /user/me:
+    get:
+      summary: Get current user
+      description: Get current user data
+      tags:
+        - User
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+                  data:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+          minLength: 3
+        password:
+          type: string
+          minLength: 8
+      required:
+        - email
+        - username
+        - password
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        profilePicture:
+          type: string
+security:
+  - bearerAuth: []

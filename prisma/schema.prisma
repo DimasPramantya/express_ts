@@ -1,0 +1,90 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String          @id @default(cuid())
+  username        String          @unique
+  name            String?
+  email           String          @unique
+  profilePicture  String?         @map("profile_picture") @db.VarChar(300)
+  password        String          @db.VarChar(300)
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at")
+  userAuthorities UserAuthority[]
+  token           UserToken?
+  blogs           Blog[]
+
+  @@map("users")
+}
+
+model Authority {
+  id              Int             @id @default(autoincrement())
+  authority       String          @unique
+  userAuthorities UserAuthority[]
+
+  @@map("authorities")
+}
+
+model UserAuthority {
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String    @map("user_id")
+  authority   Authority @relation(fields: [authorityId], references: [id], onDelete: Cascade)
+  authorityId Int       @map("authority_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  @@id([userId, authorityId])
+  @@map("users_authorities")
+}
+
+model UserToken {
+  id           Int      @id @default(autoincrement())
+  refreshToken String   @map("refresh_token") @db.VarChar(2048)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String   @unique @map("user_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("user_tokens")
+}
+
+model File {
+  id               String   @id @default(cuid())
+  cloudinaryId     String   @map("cloudinary_id")
+  originalFilename String   @map("original_filename")
+  secureUrl        String   @map("secure_url")
+  format           String
+  resourceType     String   @map("resource_type")
+  bytes            Int
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  blog Blog?
+
+  @@map("files")
+}
+
+model Blog {
+  id       Int    @id @default(autoincrement())
+  title    String
+  content  String @db.Text
+  imageUrl String @map("image_url")
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String @map("author_id")
+
+  file   File   @relation(fields: [fileId], references: [id])
+  fileId String @unique @map("file_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("blogs")
+}
