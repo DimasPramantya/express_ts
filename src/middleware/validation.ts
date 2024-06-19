@@ -2,14 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { z, ZodError } from 'zod';
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Authority, PrismaClient } from '@prisma/client'
+import { Authority} from '@prisma/client'
 
 import { CustomJwtPayload } from "../..";
 import { BadRequestException, EntityNotFoundException, InternalServerErrorException, UnauthorizedException } from '../util/global_exception';
+import prisma from '../util/prisma';
 
 dotenv.config();
-
-const prisma = new PrismaClient()
 
 export function validateData(schema: z.ZodObject<any, any>) {
     return (req: Request, res: Response, next: NextFunction) => {

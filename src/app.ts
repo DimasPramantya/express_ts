@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 import path from "path";
 import YAML from "yamljs"; 
 import swaggerUi from "swagger-ui-express"; 
-import { PrismaClient } from '@prisma/client'
 //ubah jadi routes
 import principalRouter from './routes/principal_router'
 import userRouter from './routes/user_router'
@@ -14,7 +13,7 @@ import fileRouter from './routes/file_router'
 import blogRouter from './routes/blog_router'
 import { exceptionHandler } from "./middleware/exception";
 import cors from 'cors';
-const prisma = new PrismaClient()
+
 
 //jsend
 

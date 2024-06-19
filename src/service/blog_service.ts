@@ -1,10 +1,8 @@
 import { BadRequestException, EntityNotFoundException, InternalServerErrorException } from "../util/global_exception";
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
 import blog_schema from "../schema/blog_schema";
 import cloudinary from "../util/cloudinary_uploader";
-
-const prisma = new PrismaClient()
+import prisma from "../util/prisma";
 
 async function addBlog(req: Request, res: Response, next: NextFunction){
     try {

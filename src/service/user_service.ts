@@ -1,14 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import UserSchema from "../schema/user_schema";
 
-import { PrismaClient } from '@prisma/client'
 import { generateAccessToken, generateRefreshToken } from "../util/token";
 
 import bcrypt from 'bcrypt'
 import { ConflictException, EntityNotFoundException, UnauthorizedException } from "../util/global_exception";
 import { plainToClass } from "class-transformer";
-
-const prisma = new PrismaClient()
+import prisma from "../util/prisma";
 
 async function register(req: Request, res: Response, next: NextFunction){
     try {

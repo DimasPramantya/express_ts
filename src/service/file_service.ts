@@ -2,9 +2,7 @@ import { UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
 import cloudinary from "../util/cloudinary_uploader";
 import { EntityNotFoundException, InternalServerErrorException } from "../util/global_exception";
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient()
+import prisma from "../util/prisma";
 
 interface CloudinaryFile extends Express.Multer.File {
     buffer: Buffer;
