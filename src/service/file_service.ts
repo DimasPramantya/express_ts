@@ -10,7 +10,7 @@ interface CloudinaryFile extends Express.Multer.File {
     buffer: Buffer;
 }
 
-const upload_image_cloudinary_handler = async (file: CloudinaryFile): Promise<UploadApiResponse | UploadApiErrorResponse> => {
+const uploadImageCloudinaryHandler = async (file: CloudinaryFile): Promise<UploadApiResponse | UploadApiErrorResponse> => {
     try {
         const base64String = file.buffer.toString('base64');
         const dataUri = `data:${file.mimetype};base64,${base64String}`;
@@ -24,11 +24,11 @@ const upload_image_cloudinary_handler = async (file: CloudinaryFile): Promise<Up
     }
 };
 
-const upload_image = async(req: Request, res: Response, next: NextFunction) => {
+const uploadImage = async(req: Request, res: Response, next: NextFunction) => {
     try {
         const file = req.file as CloudinaryFile;
         console.log(file)
-        const result = await upload_image_cloudinary_handler(file);
+        const result = await uploadImageCloudinaryHandler(file);
         const file_db = await prisma.file.create({
             data: {
                 originalFilename: file.originalname,
@@ -46,7 +46,7 @@ const upload_image = async(req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const get_image_by_id = async(req: Request, res: Response, next: NextFunction) => {
+const getImageById = async(req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         const file = await prisma.file.findUnique({
@@ -64,6 +64,6 @@ const get_image_by_id = async(req: Request, res: Response, next: NextFunction) =
 }
 
 export default {
-    upload_image, get_image_by_id
+    uploadImage, getImageById
 }
 

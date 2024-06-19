@@ -123,7 +123,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-const get_personal_info = async(req: Request, res: Response, next: NextFunction)=>{
+const getPersonalInfo = async(req: Request, res: Response, next: NextFunction)=>{
     try {
         const userDTO = plainToClass(UserSchema.UserResponse, req.user, { excludeExtraneousValues: true });
         let user = {...userDTO, authorities: req.authorities}
@@ -134,5 +134,5 @@ const get_personal_info = async(req: Request, res: Response, next: NextFunction)
 }
 
 export default {
-    register, login, get_personal_info
+    register, login, getPersonalInfo
 }

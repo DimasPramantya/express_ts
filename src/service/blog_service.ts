@@ -2,12 +2,11 @@ import { BadRequestException, EntityNotFoundException, InternalServerErrorExcept
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import blog_schema from "../schema/blog_schema";
-import { get } from "http";
 import cloudinary from "../util/cloudinary_uploader";
 
 const prisma = new PrismaClient()
 
-const add_blog = async (req: Request, res: Response, next: NextFunction) => {
+const addBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const blog_data = blog_schema.create.parse(req.body);
         const file = await prisma.file.findUnique({ where: { id: blog_data.fileId } });
@@ -29,7 +28,7 @@ const add_blog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const get_all_blog = async (req: Request, res: Response, next: NextFunction) => {
+const getAllBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
@@ -76,7 +75,7 @@ const get_all_blog = async (req: Request, res: Response, next: NextFunction) => 
     }
 }
 
-const get_blog_by_id = async (req: Request, res: Response, next: NextFunction) => {
+const getBlogById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id  = parseInt(req.params.id);
         const blog = await prisma.blog.findUnique({
@@ -92,7 +91,7 @@ const get_blog_by_id = async (req: Request, res: Response, next: NextFunction) =
     }
 }
 
-const delete_blog = async (req: Request, res: Response, next: NextFunction) => {
+const deleteBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id  = parseInt(req.params.id);
         const blog = await prisma.blog.findUnique({ where: { id } });
@@ -112,7 +111,7 @@ const delete_blog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const update_blog = async (req: Request, res: Response, next: NextFunction) => {
+const updateBlog = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const blog_data = blog_schema.update.parse(req.body);
         const file = await prisma.file.findUnique({ where: { id: blog_data.fileId } });
@@ -134,7 +133,7 @@ const update_blog = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-const get_blog_by_author = async (req: Request, res: Response, next: NextFunction) => {
+const getBlogByAuthor = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
@@ -163,5 +162,5 @@ const get_blog_by_author = async (req: Request, res: Response, next: NextFunctio
 }
 
 export default {
-    add_blog, get_all_blog, get_blog_by_id, delete_blog, update_blog, get_blog_by_author
+    addBlog, getAllBlog,getBlogById, deleteBlog, updateBlog, getBlogByAuthor
 }

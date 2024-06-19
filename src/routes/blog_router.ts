@@ -7,17 +7,17 @@ import blog_service from "../service/blog_service";
 
 const router = express.Router();
 
-router.post("", validate_token, has_any_authorities(["ADMIN"]), validateData(blog_schema.create), blog_service.add_blog);
+router.post("", validate_token, has_any_authorities(["ADMIN"]), validateData(blog_schema.create), blog_service.addBlog);
 
-router.get("", blog_service.get_all_blog);
+router.get("", blog_service.getAllBlog);
 
-router.get("/:id", blog_service.get_blog_by_id);
+router.get("/:id", blog_service.getBlogById);
 
-router.delete("/:id", validate_token, has_any_authorities(["ADMIN"]), blog_service.delete_blog);
+router.delete("/:id", validate_token, has_any_authorities(["ADMIN"]), blog_service.deleteBlog);
 
-router.put("", validate_token, has_any_authorities(["ADMIN"]), validateData(blog_schema.update), blog_service.update_blog);
+router.put("", validate_token, has_any_authorities(["ADMIN"]), validateData(blog_schema.update), blog_service.updateBlog);
 
-router.get("/users/me", validate_token, has_any_authorities(["ADMIN"]), blog_service.get_blog_by_author);
+router.get("/users/me", validate_token, has_any_authorities(["ADMIN"]), blog_service.getBlogByAuthor);
 
 export default router;
 

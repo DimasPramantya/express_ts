@@ -8,10 +8,10 @@ import YAML from "yamljs";
 import swaggerUi from "swagger-ui-express"; 
 import { PrismaClient } from '@prisma/client'
 //ubah jadi routes
-import principal_router from './routes/principal_router'
-import user_router from './routes/user_router'
-import file_router from './routes/file_router'
-import blog_router from './routes/blog_router'
+import principalRouter from './routes/principal_router'
+import userRouter from './routes/user_router'
+import fileRouter from './routes/file_router'
+import blogRouter from './routes/blog_router'
 import { exceptionHandler } from "./middleware/exception";
 import cors from 'cors';
 const prisma = new PrismaClient()
@@ -41,10 +41,10 @@ app.get('/docs.yaml', (req, res) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/principal", principal_router);
-app.use("/user",user_router);
-app.use("/file", file_router);
-app.use("/blog", blog_router);
+app.use("/principal", principalRouter);
+app.use("/user",userRouter);
+app.use("/file", fileRouter);
+app.use("/blog", blogRouter);
 app.use(exceptionHandler);
 
 app.get("/public", (req: Request, res: Response, next: NextFunction)=>{
